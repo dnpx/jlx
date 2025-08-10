@@ -19,19 +19,41 @@ class BRCP_Admin {
 		add_action( 'save_post', [ $this, 'save_post_meta' ], 10, 2 );
 		add_filter( 'page_row_actions', [ $this, 'page_row_actions' ], 10, 2 );
 		add_filter( 'post_row_actions', [ $this, 'page_row_actions' ], 10, 2 );
-		add_action( 'admin_menu', [ $this, 'add_editor_page' ] );
+		add_action( 'admin_menu', [ $this, 'add_admin_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_editor_assets' ] );
 	}
 
-	public function add_editor_page() {
+	public function add_admin_menu() {
+		add_menu_page(
+			__( 'Brnews Composer', 'brnews-composer-pro' ),
+			'Brnews Composer',
+			'edit_posts',
+			'brcp-dashboard',
+			[ $this, 'render_dashboard_page' ],
+			'dashicons-layout',
+			6
+		);
+
 		add_submenu_page(
-			null, // No parent menu
+			'brcp-dashboard',
 			__( 'Brnews Composer Editor', 'brnews-composer-pro' ),
-			__( 'Brnews Composer Editor', 'brnews-composer-pro' ),
+			__( 'Editor', 'brnews-composer-pro' ),
 			'edit_posts',
 			'brcp-editor',
 			[ $this, 'render_editor_page' ]
 		);
+
+		// Remove the submenu page from the menu
+		remove_submenu_page( 'brcp-dashboard', 'brcp-editor' );
+	}
+
+	public function render_dashboard_page() {
+		?>
+		<div class="wrap">
+			<h1><?php _e( 'Brnews Composer Dashboard', 'brnews-composer-pro' ); ?></h1>
+			<p><?php _e( 'Welcome to the Brnews Composer. You can start editing your pages by clicking the "Edit with Brnews Composer" button on the post or page edit screen.', 'brnews-composer-pro' ); ?></p>
+		</div>
+		<?php
 	}
 
 	public function enqueue_editor_assets( $hook ) {

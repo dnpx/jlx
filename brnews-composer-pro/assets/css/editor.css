@@ -42,3 +42,85 @@
     font-size: 14px;
     font-weight: 600;
 }
+
+.brcp-block-group {
+    margin-bottom: 15px;
+}
+
+.brcp-block-group-header {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 15px;
+    background-color: #e0e0e0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.brcp-block-group-items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 10px;
+}
+
+.brcp-block-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    cursor: grab;
+    text-align: center;
+}
+
+.brcp-block-item .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 5px;
+}
+
+.brcp-block-item-label {
+    font-size: 12px;
+}
+
+#brcp-drop-zone {
+    position: absolute;
+    top: 37px; /* A bit of offset to avoid the header */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 115, 170, 0.2);
+    border: 2px dashed #0073aa;
+    display: none;
+    z-index: 100;
+    pointer-events: all;
+}
+
+#brcp-drop-zone.brcp-drop-zone--over {
+    background-color: rgba(0, 115, 170, 0.4);
+}
+
+.brcp-inspector-fields {
+    padding: 15px;
+}
+
+.brcp-inspector-field {
+    margin-bottom: 15px;
+}
+
+.brcp-inspector-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.brcp-inspector-field input,
+.brcp-inspector-field select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}

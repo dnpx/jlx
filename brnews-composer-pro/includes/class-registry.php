@@ -8,7 +8,7 @@ class BRCP_Registry {
 	private static $instance;
 
 	private $libraries = [];
-	private $blocks = [];
+	private $block_groups = [];
 	private $fragments = [];
 
 	public static function instance() {
@@ -43,11 +43,20 @@ class BRCP_Registry {
 			$this->libraries[ $library_slug ] = $manifest;
 
 			if ( file_exists( $blocks_file ) ) {
-				$blocks = json_decode( file_get_contents( $blocks_file ), true );
-				if ( $blocks && isset( $blocks['groups'] ) ) {
-					foreach ( $blocks['groups'] as $group ) {
+				$blocks_data = json_decode( file_get_contents( $blocks_file ), true );
+				if ( $blocks_data && isset( $blocks_data['groups'] ) ) {
+					foreach ( $blocks_data['groups'] as $group ) {
+						$group_id = $group['id'];
+						if ( ! isset( $this->block_groups[ $group_id ] ) ) {
+							$this->block_groups[ $group_id ] = [
+								'id'    => $group_id,
+								'title' => $group['title'],
+								'items' => [],
+							];
+						}
+
 						foreach ( $group['items'] as $item ) {
-							$this->blocks[ $item['type'] ] = $item;
+							$this->block_groups[ $group_id ]['items'][] = $item;
 						}
 					}
 				}
@@ -76,7 +85,14 @@ class BRCP_Registry {
 	}
 
 	public function get_block( $type ) {
-		return isset( $this->blocks[ $type ] ) ? $this->blocks[ $type ] : null;
+		foreach ( $this->block_groups as $group ) {
+			foreach ( $group['items'] as $item ) {
+				if ( $item['type'] === $type ) {
+					return $item;
+				}
+			}
+		}
+		return null;
 	}
 
 	public function get_fragment( $slug ) {

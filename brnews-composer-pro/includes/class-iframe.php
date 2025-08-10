@@ -39,17 +39,55 @@ class BRCP_Iframe {
                 body {
                     background-color: #fff;
                 }
+                .brcp-module {
+                    position: relative;
+                    cursor: pointer;
+                }
+                .brcp-module--selected {
+                    outline: 2px solid #0073aa;
+                    outline-offset: -2px;
+                }
             </style>
         </head>
         <body class="brcp-iframe-body">
             <div id="brcp-iframe-content">
                 <?php
                 // This is where the rendered layout will go.
-                // For now, it will be empty.
-                echo '<h1>Iframe Content</h1>';
+                echo BRCP_Renderer::instance()->render_layout_from_meta( $post_id );
                 ?>
             </div>
             <?php wp_footer(); ?>
+            <script>
+                window.addEventListener('message', function (event) {
+                    if (event.data.action === 'renderLayout') {
+                        wp.apiFetch({
+                            path: '/brcp/v1/render-layout',
+                            method: 'POST',
+                            data: event.data.layout
+                        }).then(response => {
+                            document.getElementById('brcp-iframe-content').innerHTML = response.html;
+                        });
+                    }
+                });
+
+                document.getElementById('brcp-iframe-content').addEventListener('click', function (e) {
+                    const module = e.target.closest('.brcp-module');
+                    if (module) {
+                        // Remove existing selected class
+                        document.querySelectorAll('.brcp-module--selected').forEach(el => {
+                            el.classList.remove('brcp-module--selected');
+                        });
+                        // Add selected class
+                        module.classList.add('brcp-module--selected');
+
+                        window.parent.postMessage({
+                            action: 'selectBlock',
+                            moduleId: module.dataset.moduleId,
+                            blockType: module.dataset.type
+                        }, '*');
+                    }
+                });
+            </script>
         </body>
         </html>
         <?php

@@ -16,6 +16,26 @@ class BRCP_REST_Controller {
 
 	private function __construct() {
 		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
+		add_action( 'init', [ $this, 'register_meta_fields' ] );
+	}
+
+	public function register_meta_fields() {
+		register_post_meta( 'post', '_brcp_layout', [
+			'show_in_rest' => true,
+			'single'       => true,
+			'type'         => 'string',
+			'auth_callback' => function() {
+				return current_user_can( 'edit_posts' );
+			}
+		] );
+		register_post_meta( 'page', '_brcp_layout', [
+			'show_in_rest' => true,
+			'single'       => true,
+			'type'         => 'string',
+			'auth_callback' => function() {
+				return current_user_can( 'edit_posts' );
+			}
+		] );
 	}
 
 	public function register_routes() {
@@ -34,6 +54,18 @@ class BRCP_REST_Controller {
 		register_rest_route( 'brcp/v1', '/fragment/(?P<slug>[a-zA-Z0-9_-]+)', [
 			'methods'  => 'GET',
 			'callback' => [ $this, 'get_fragment' ],
+			'permission_callback' => '__return_true',
+		] );
+
+		register_rest_route( 'brcp/v1', '/block/(?P<type>[a-zA-Z0-9_-]+)', [
+			'methods'  => 'GET',
+			'callback' => [ $this, 'get_block' ],
+			'permission_callback' => '__return_true',
+		] );
+
+		register_rest_route( 'brcp/v1', '/render-layout', [
+			'methods'  => 'POST',
+			'callback' => [ $this, 'render_layout_endpoint' ],
 			'permission_callback' => '__return_true',
 		] );
 	}
@@ -67,5 +99,22 @@ class BRCP_REST_Controller {
 		}
 
 		return new WP_REST_Response( $fragment, 200 );
+	}
+
+	public function get_block( $request ) {
+		$registry = BRCP_Registry::instance();
+		$block = $registry->get_block( $request->get_param( 'type' ) );
+
+		if ( ! $block ) {
+			return new WP_Error( 'brcp_block_not_found', __( 'Block not found', 'brnews-composer-pro' ), [ 'status' => 404 ] );
+		}
+
+		return new WP_REST_Response( $block, 200 );
+	}
+
+	public function render_layout_endpoint( $request ) {
+		$layout = $request->get_json_params();
+		$html = BRCP_Renderer::instance()->render_layout( $layout );
+		return new WP_REST_Response( [ 'html' => $html ], 200 );
 	}
 }

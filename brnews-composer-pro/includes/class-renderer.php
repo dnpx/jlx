@@ -65,11 +65,15 @@ class BRCP_Renderer {
 	public function render_module( $module_data ) {
 		$type = $module_data['type'];
 		$props = isset( $module_data['props'] ) ? $module_data['props'] : [];
+		$module_id = isset( $module_data['id'] ) ? $module_data['id'] : uniqid( 'brcp-module-' );
 
 		$render_method = 'render_' . $type;
 
 		if ( method_exists( $this, $render_method ) ) {
-			return $this->{$render_method}( $props );
+			$output = '<div class="brcp-module" data-type="' . esc_attr( $type ) . '" data-module-id="' . esc_attr( $module_id ) . '">';
+			$output .= $this->{$render_method}( $props );
+			$output .= '</div>';
+			return $output;
 		}
 
 		return '<!-- Module ' . esc_html( $type ) . ' not found -->';
