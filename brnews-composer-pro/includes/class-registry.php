@@ -77,11 +77,7 @@ class BRCP_Registry {
 	}
 
 	public function get_blocks() {
-		return $this->blocks;
-	}
-
-	public function get_fragments() {
-		return $this->fragments;
+		return array_values( $this->block_groups );
 	}
 
 	public function get_block( $type ) {
@@ -93,6 +89,10 @@ class BRCP_Registry {
 			}
 		}
 		return null;
+	}
+
+	public function get_fragments() {
+		return $this->fragments;
 	}
 
 	public function get_fragment( $slug ) {

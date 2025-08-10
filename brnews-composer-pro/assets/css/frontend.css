@@ -1,51 +1,130 @@
 /* Brnews Composer Pro - Frontend Styles */
-.brcp-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: -15px;
-    margin-right: -15px;
-    margin-bottom: 30px;
+
+/* --- General Post Item Styling --- */
+.brcp-post-item {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.brcp-col {
+.brcp-post-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+.brcp-post-thumb {
+    display: block;
     position: relative;
+    overflow: hidden;
+}
+
+.brcp-post-thumb img {
     width: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
 }
 
-.brcp-col--1 { flex: 0 0 8.333333%; max-width: 8.333333%; }
-.brcp-col--2 { flex: 0 0 16.666667%; max-width: 16.666667%; }
-.brcp-col--3 { flex: 0 0 25%; max-width: 25%; }
-.brcp-col--4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
-.brcp-col--5 { flex: 0 0 41.666667%; max-width: 41.666667%; }
-.brcp-col--6 { flex: 0 0 50%; max-width: 50%; }
-.brcp-col--7 { flex: 0 0 58.333333%; max-width: 58.333333%; }
-.brcp-col--8 { flex: 0 0 66.666667%; max-width: 66.666667%; }
-.brcp-col--9 { flex: 0 0 75%; max-width: 75%; }
-.brcp-col--10 { flex: 0 0 83.333333%; max-width: 83.333333%; }
-.brcp-col--11 { flex: 0 0 91.666667%; max-width: 91.666667%; }
-.brcp-col--12 { flex: 0 0 100%; max-width: 100%; }
+.brcp-post-item:hover .brcp-post-thumb img {
+    transform: scale(1.05);
+}
 
-.brcp-button {
+.brcp-post-content {
+    padding: 20px;
+}
+
+.brcp-post-category {
     display: inline-block;
-    padding: 10px 20px;
-    background-color: #0073aa;
+    background-color: #3b82f6;
     color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 10px;
     text-decoration: none;
-    border-radius: 3px;
 }
 
-/* Big Grid 1 */
-.brcp-big-grid--style-1 {
+.brcp-post-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 10px;
+    line-height: 1.3;
+}
+
+.brcp-post-title a {
+    color: #1a202c;
+    text-decoration: none;
+}
+
+.brcp-post-meta {
+    font-size: 14px;
+    color: #718096;
+}
+
+.brcp-post-meta .brcp-post-author {
+    font-weight: 600;
+}
+
+.brcp-post-meta .brcp-post-date {
+    margin-left: 15px;
+}
+
+/* --- Big Grid 1 --- */
+.brcp-big-grid-1 {
     display: grid;
     grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.brcp-big-grid-1-sidebar {
+    display: flex;
+    flex-direction: column;
     gap: 20px;
 }
 
-/* Flex Block 1 */
-.brcp-flex-block--style-1 {
+.brcp-post-item--small {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+}
+
+.brcp-post-thumb-small {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.brcp-post-thumb-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.brcp-post-title-small {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.brcp-post-title-small a {
+    color: #1a202c;
+    text-decoration: none;
+}
+
+/* --- Flex Block 1 --- */
+.brcp-flex-block-1 {
+    display: grid;
+    grid-template-columns: repeat(var(--brcp-cols, 4), 1fr);
+    gap: 30px;
+}
+
+.brcp-flex-block-1 .brcp-post-title {
+    font-size: 18px;
 }

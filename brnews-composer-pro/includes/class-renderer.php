@@ -100,7 +100,7 @@ class BRCP_Renderer {
 	public function render_big_grid_1( $props ) {
 		$args = [
 			'post_type'      => 'post',
-			'posts_per_page' => isset( $props['posts'] ) ? absint( $props['posts'] ) : 7,
+			'posts_per_page' => isset( $props['posts'] ) ? absint( $props['posts'] ) : 5,
 			'category_name'  => isset( $props['cat'] ) ? sanitize_text_field( $props['cat'] ) : '',
 			'ignore_sticky_posts' => 1,
 		];
@@ -111,13 +111,48 @@ class BRCP_Renderer {
 			return '<!-- No posts found -->';
 		}
 
-		$output = '<div class="brcp-big-grid brcp-big-grid--style-1">';
-		// For now, just a placeholder
+		$output = '<div class="brcp-big-grid-1">';
+
+		$counter = 0;
 		while( $query->have_posts() ) {
 			$query->the_post();
-			$output .= '<div>' . get_the_title() . '</div>';
+			$counter++;
+
+			$thumb_url = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'large' ) : 'https://picsum.photos/800/600?random=' . get_the_ID();
+			$category = get_the_category();
+
+			if ( $counter == 1 ) {
+				$output .= '<div class="brcp-post-item brcp-post-item--large">';
+				$output .= '<a href="' . get_permalink() . '" class="brcp-post-thumb"><img src="' . esc_url( $thumb_url ) . '" alt="' . get_the_title() . '"></a>';
+				$output .= '<div class="brcp-post-content">';
+				if ( ! empty( $category ) ) {
+					$output .= '<a href="' . get_category_link( $category[0]->term_id ) . '" class="brcp-post-category">' . $category[0]->name . '</a>';
+				}
+				$output .= '<h3 class="brcp-post-title"><a href="' . get_permalink() . '">' . get_the_title() . '</a></h3>';
+				$output .= '<div class="brcp-post-meta">';
+				$output .= '<span class="brcp-post-author">' . get_the_author() . '</span>';
+				$output .= '<span class="brcp-post-date">' . get_the_date() . '</span>';
+				$output .= '</div>';
+				$output .= '</div>';
+				$output .= '</div>';
+				if ( $query->post_count > 1 ) {
+					$output .= '<div class="brcp-big-grid-1-sidebar">';
+				}
+			} else {
+				$output .= '<div class="brcp-post-item brcp-post-item--small">';
+				$output .= '<a href="' . get_permalink() . '" class="brcp-post-thumb-small"><img src="' . esc_url( $thumb_url ) . '" alt="' . get_the_title() . '"></a>';
+				$output .= '<div class="brcp-post-content">';
+				$output .= '<h4 class="brcp-post-title-small"><a href="' . get_permalink() . '">' . get_the_title() . '</a></h4>';
+				$output .= '</div>';
+				$output .= '</div>';
+			}
 		}
-		$output .= '</div>';
+
+		if ( $query->post_count > 1 ) {
+			$output .= '</div>'; // close sidebar
+		}
+
+		$output .= '</div>'; // close main grid
 
 		wp_reset_postdata();
 
@@ -127,7 +162,7 @@ class BRCP_Renderer {
 	public function render_flex_block_1( $props ) {
 		$args = [
 			'post_type'      => 'post',
-			'posts_per_page' => isset( $props['posts'] ) ? absint( $props['posts'] ) : 8,
+			'posts_per_page' => isset( $props['posts'] ) ? absint( $props['posts'] ) : 4,
 			'category_name'  => isset( $props['cat'] ) ? sanitize_text_field( $props['cat'] ) : '',
 			'ignore_sticky_posts' => 1,
 		];
@@ -138,12 +173,26 @@ class BRCP_Renderer {
 			return '<!-- No posts found -->';
 		}
 
-		$output = '<div class="brcp-flex-block brcp-flex-block--style-1">';
-		// For now, just a placeholder
+		$cols = isset( $props['cols'] ) ? absint( $props['cols'] ) : 4;
+		$output = '<div class="brcp-flex-block-1" style="--brcp-cols: ' . $cols . '">';
+
 		while( $query->have_posts() ) {
 			$query->the_post();
-			$output .= '<div>' . get_the_title() . '</div>';
+
+			$thumb_url = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'medium_large' ) : 'https://picsum.photos/400/300?random=' . get_the_ID();
+			$category = get_the_category();
+
+			$output .= '<div class="brcp-post-item">';
+			$output .= '<a href="' . get_permalink() . '" class="brcp-post-thumb"><img src="' . esc_url( $thumb_url ) . '" alt="' . get_the_title() . '"></a>';
+			$output .= '<div class="brcp-post-content">';
+			if ( ! empty( $category ) ) {
+				$output .= '<a href="' . get_category_link( $category[0]->term_id ) . '" class="brcp-post-category">' . $category[0]->name . '</a>';
+			}
+			$output .= '<h3 class="brcp-post-title"><a href="' . get_permalink() . '">' . get_the_title() . '</a></h3>';
+			$output .= '</div>';
+			$output .= '</div>';
 		}
+
 		$output .= '</div>';
 
 		wp_reset_postdata();

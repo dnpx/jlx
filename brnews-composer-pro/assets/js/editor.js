@@ -1,8 +1,117 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const blockLibrary = document.getElementById('brcp-block-library');
-    const iframe = document.getElementById('brcp-editor-iframe');
+    // Tab switching
+    const tabs = document.querySelectorAll('.panel-tabs .tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            const targetId = tab.dataset.target;
+            document.querySelectorAll('.panel-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(targetId).style.display = 'block';
+        });
+    });
+
+    // Inspector toggle
+    const inspectorToggle = document.getElementById('brcp-toggle-right');
+    const rightPanel = document.getElementById('brcp-right');
+    const shell = document.getElementById('brcp-shell');
+
+    if (inspectorToggle && rightPanel && shell) {
+        inspectorToggle.addEventListener('click', () => {
+            const isHidden = rightPanel.style.display === 'none';
+            rightPanel.style.display = isHidden ? 'flex' : 'none';
+            inspectorToggle.classList.toggle('active', isHidden);
+
+            if (!isHidden) {
+                shell.style.gridTemplateColumns = '280px 1fr';
+            } else {
+                shell.style.gridTemplateColumns = '280px 1fr 320px';
+            }
+        });
+    }
+
+    const blockLibraryContainer = document.getElementById('brcp-block-library');
+    const searchInput = document.querySelector('.panel-search input');
+    let allGroups = [];
+
+    function renderBlockLibrary(groups) {
+        blockLibraryContainer.innerHTML = '';
+        groups.forEach(group => {
+            const groupEl = document.createElement('div');
+            groupEl.classList.add('brcp-pal-group');
+
+            const groupHeader = document.createElement('div');
+            groupHeader.classList.add('brcp-pal-header');
+            groupHeader.innerHTML = `<span class="brcp-pal-title">${group.title}</span>`;
+            groupEl.appendChild(groupHeader);
+
+            const groupItems = document.createElement('div');
+            groupItems.classList.add('brcp-pal-list');
+
+            group.items.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.classList.add('brcp-pal-item');
+                itemEl.dataset.type = item.type;
+                itemEl.dataset.preset = JSON.stringify(item.preset);
+                itemEl.draggable = true;
+
+                itemEl.innerHTML = `
+                    <div class="brcp-pal-item-icon"><span class="dashicons ${item.icon || 'dashicons-block-default'}"></span></div>
+                    <div class="brcp-pal-item-content">
+                        <div class="brcp-pal-item-label">${item.label}</div>
+                        <p class="brcp-pal-item-desc">${item.description}</p>
+                    </div>
+                `;
+
+                itemEl.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', JSON.stringify({
+                        type: item.type,
+                        preset: item.preset
+                    }));
+                    e.target.classList.add('dragging');
+                });
+                itemEl.addEventListener('dragend', (e) => {
+                    e.target.classList.remove('dragging');
+                });
+
+                groupItems.appendChild(itemEl);
+            });
+
+            groupEl.appendChild(groupItems);
+            blockLibraryContainer.appendChild(groupEl);
+        });
+    }
+
+    // Fetch and render block library
+    if (blockLibraryContainer) {
+        wp.apiFetch({ path: '/brcp/v1/library' }).then(groups => {
+            allGroups = groups;
+            renderBlockLibrary(allGroups);
+        });
+    }
+
+    // Search functionality
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredGroups = allGroups.map(group => {
+                const filteredItems = group.items.filter(item =>
+                    item.label.toLowerCase().includes(searchTerm) ||
+                    item.description.toLowerCase().includes(searchTerm)
+                );
+                return { ...group, items: filteredItems };
+            }).filter(group => group.items.length > 0);
+
+            renderBlockLibrary(filteredGroups);
+        });
+    }
+
+    const iframe = document.getElementById('brcp-iframe');
     const dropZone = document.createElement('div');
-    dropZone.id = 'brcp-drop-zone';
+    dropZone.id = 'brcp-dropzone';
     iframe.parentNode.insertBefore(dropZone, iframe.nextSibling);
 
     let currentLayout = { rows: [] };
@@ -10,59 +119,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const postId = new URLSearchParams(window.location.search).get('post_id');
 
     // Fetch initial layout
-    wp.apiFetch({ path: `/wp/v2/posts/${postId}?context=edit` }).then(post => {
-        if (post.meta._brcp_layout && post.meta._brcp_layout[0]) {
-            try {
-                currentLayout = JSON.parse(post.meta._brcp_layout[0]);
-            } catch (e) {
-                console.error('Error parsing layout JSON:', e);
+    if (postId) {
+        wp.apiFetch({ path: `/wp/v2/posts/${postId}?context=edit` }).then(post => {
+            if (post.meta._brcp_layout && post.meta._brcp_layout[0]) {
+                try {
+                    currentLayout = JSON.parse(post.meta._brcp_layout[0]);
+                } catch (e) {
+                    console.error('Error parsing layout JSON:', e);
+                }
             }
-        }
-    });
-
-    if (blockLibrary) {
-        wp.apiFetch({ path: '/brcp/v1/library' }).then(groups => {
-            groups.forEach(group => {
-                const groupEl = document.createElement('div');
-                groupEl.classList.add('brcp-block-group');
-
-                const groupHeader = document.createElement('h3');
-                groupHeader.classList.add('brcp-block-group-header');
-                groupHeader.textContent = group.title;
-                groupEl.appendChild(groupHeader);
-
-                const groupItems = document.createElement('div');
-                groupItems.classList.add('brcp-block-group-items');
-
-                group.items.forEach(item => {
-                    const itemEl = document.createElement('div');
-                    itemEl.classList.add('brcp-block-item');
-                    itemEl.dataset.type = item.type;
-                    itemEl.dataset.preset = JSON.stringify(item.preset);
-                    itemEl.draggable = true;
-
-                    const icon = document.createElement('span');
-                    icon.classList.add('dashicons', item.icon);
-                    itemEl.appendChild(icon);
-
-                    const label = document.createElement('span');
-                    label.classList.add('brcp-block-item-label');
-                    label.textContent = item.label;
-                    itemEl.appendChild(label);
-
-                    itemEl.addEventListener('dragstart', (e) => {
-                        e.dataTransfer.setData('text/plain', JSON.stringify({
-                            type: item.type,
-                            preset: item.preset
-                        }));
-                    });
-
-                    groupItems.appendChild(itemEl);
-                });
-
-                groupEl.appendChild(groupItems);
-                blockLibrary.appendChild(groupEl);
-            });
         });
     }
 
@@ -70,29 +135,28 @@ document.addEventListener('DOMContentLoaded', function () {
     let draggedItem = null;
 
     document.addEventListener('dragstart', (e) => {
-        if (e.target.closest('.brcp-block-item')) {
-            draggedItem = e.target.closest('.brcp-block-item');
-            dropZone.style.display = 'block';
+        if (e.target.closest('.brcp-pal-item')) {
+            draggedItem = e.target.closest('.brcp-pal-item');
+            dropZone.classList.add('show');
         }
     });
 
     document.addEventListener('dragend', () => {
         draggedItem = null;
-        dropZone.style.display = 'none';
+        dropZone.classList.remove('show');
     });
 
-    dropZone.addEventListener('dragover', (e) => {
+    iframe.addEventListener('dragover', (e) => {
         e.preventDefault();
-        dropZone.classList.add('brcp-drop-zone--over');
     });
 
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('brcp-drop-zone--over');
-    });
-
-    dropZone.addEventListener('drop', (e) => {
+    iframe.contentWindow.addEventListener('dragover', (e) => {
         e.preventDefault();
-        dropZone.classList.remove('brcp-drop-zone--over');
+        // This is tricky, we need to show the drop indicator in the iframe
+    });
+
+    iframe.contentWindow.addEventListener('drop', (e) => {
+        e.preventDefault();
         if (draggedItem) {
             const blockPreset = JSON.parse(draggedItem.dataset.preset);
             const blockType = draggedItem.dataset.type;
@@ -103,17 +167,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 props: blockPreset
             };
 
-            // For now, add to the first column of the first row
-            if (currentLayout.rows.length === 0) {
-                currentLayout.rows.push({
-                    columns: [{ width: 12, modules: [] }]
-                });
-            }
             // Add a new row for each block for simplicity
             currentLayout.rows.push({
                 columns: [{ width: 12, modules: [newModule] }]
             });
-
 
             saveAndRenderLayout(currentLayout);
         }
@@ -127,12 +184,10 @@ document.addEventListener('DOMContentLoaded', function () {
             inspector.innerHTML = 'Loading...';
 
             wp.apiFetch({ path: `/brcp/v1/block/${blockType}` }).then(block => {
-                inspector.innerHTML = `<div class="brcp-panel-header"><h3>${block.label}</h3></div>`;
+                inspector.innerHTML = `<div class="insp-group"><div class="insp-title">${block.label}</div><div class="insp-body"></div></div>`;
+                const inspectorBody = inspector.querySelector('.insp-body');
 
                 if (block.fields) {
-                    const fieldsWrapper = document.createElement('div');
-                    fieldsWrapper.classList.add('brcp-inspector-fields');
-
                     block.fields.forEach(field => {
                         const fieldWrapper = document.createElement('div');
                         fieldWrapper.classList.add('brcp-inspector-field');
@@ -158,7 +213,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         input.name = field.key;
                         input.id = `brcp-field-${field.key}`;
 
-                        // Set current value
                         const module = findModule(currentLayout, selectedModuleId);
                         if (module && module.props[field.key]) {
                             input.value = module.props[field.key];
@@ -172,9 +226,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
 
                         fieldWrapper.appendChild(input);
-                        fieldsWrapper.appendChild(fieldWrapper);
+                        inspectorBody.appendChild(fieldWrapper);
                     });
-                    inspector.appendChild(fieldsWrapper);
                 }
             });
         }
@@ -207,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function findAndUpdateModule(layout, moduleId, newProps) {
-        const newLayout = JSON.parse(JSON.stringify(layout)); // Deep copy
+        const newLayout = JSON.parse(JSON.stringify(layout));
         newLayout.rows.forEach(row => {
             row.columns.forEach(col => {
                 col.modules.forEach(module => {

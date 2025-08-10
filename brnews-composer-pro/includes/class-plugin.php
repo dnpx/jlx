@@ -39,8 +39,6 @@ final class BRCP_Plugin {
 		require_once BRCP_PLUGIN_PATH . 'includes/class-iframe.php';
 		require_once BRCP_PLUGIN_PATH . 'includes/class-renderer.php';
 		require_once BRCP_PLUGIN_PATH . 'includes/frontend/class-frontend.php';
-		// require_once BRCP_PLUGIN_PATH . 'includes/class-shortcodes.php';
-		// require_once BRCP_PLUGIN_PATH . 'includes/class-templates.php';
 	}
 
 	private function init_hooks() {
@@ -58,7 +56,5 @@ final class BRCP_Plugin {
 		BRCP_Iframe::instance();
 		BRCP_Renderer::instance();
 		BRCP_Frontend::instance();
-		// BRCP_Shortcodes::instance();
-		// BRCP_Templates::instance();
 	}
 }

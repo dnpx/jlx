@@ -57,7 +57,7 @@ class BRCP_Admin {
 	}
 
 	public function enqueue_editor_assets( $hook ) {
-		if ( 'toplevel_page_brcp-editor' !== $hook && 'admin_page_brcp-editor' !== $hook) {
+		if ( 'brnews-composer_page_brcp-editor' !== $hook && 'toplevel_page_brcp-dashboard' !== $hook ) {
 			return;
 		}
 
@@ -83,8 +83,6 @@ class BRCP_Admin {
 			wp_die( __( 'Invalid post ID or insufficient permissions.', 'brnews-composer-pro' ) );
 		}
 
-		// The get_permalink() function may not be available on the admin side.
-		// We need to use get_edit_post_link() and modify it.
 		$iframe_url = add_query_arg(
 			[
 				'brcp_iframe' => 'true',
@@ -94,21 +92,35 @@ class BRCP_Admin {
 		);
 
 		?>
-		<div id="brcp-editor-wrapper">
-			<div id="brcp-editor-left-panel">
-				<div class="brcp-panel-header">
-					<h2><?php _e( 'Blocks', 'brnews-composer-pro' ); ?></h2>
+		<div id="brcp-shell">
+			<div id="brcp-left" class="panel">
+				<div class="panel-header">Elements</div>
+				<div class="panel-tabs">
+					<button class="tab active" data-target="brcp-block-library">Blocks</button>
+					<button class="tab" data-target="brcp-fragment-library">Fragments</button>
 				</div>
-				<div id="brcp-block-library"></div>
-			</div>
-			<div id="brcp-editor-center-panel">
-				<iframe id="brcp-editor-iframe" src="<?php echo esc_url( $iframe_url ); ?>"></iframe>
-			</div>
-			<div id="brcp-editor-right-panel">
-				<div class="brcp-panel-header">
-					<h2><?php _e( 'Inspector', 'brnews-composer-pro' ); ?></h2>
+				<div class="panel-body">
+					<div class="panel-search">
+						<input type="search" placeholder="Search elements...">
+					</div>
+					<div id="brcp-block-library" class="panel-section"></div>
+					<div id="brcp-fragment-library" class="panel-section" style="display: none;"></div>
 				</div>
-				<div id="brcp-block-inspector"></div>
+			</div>
+			<div id="brcp-center">
+				<div id="brcp-toolbar">
+					<div id="brcp-toolbar-left">
+						<div id="brcp-status">Saved</div>
+					</div>
+					<div id="brcp-toolbar-right">
+						<button id="brcp-toggle-right" class="active">Inspector</button>
+					</div>
+				</div>
+				<iframe id="brcp-iframe" src="<?php echo esc_url( $iframe_url ); ?>"></iframe>
+			</div>
+			<div id="brcp-right" class="panel">
+				<div class="panel-header">Inspector</div>
+				<div id="brcp-block-inspector" class="panel-body"></div>
 			</div>
 		</div>
 		<?php
