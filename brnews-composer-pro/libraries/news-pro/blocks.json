@@ -1,0 +1,40 @@
+{
+    "groups": [
+        {
+            "id": "news_grids",
+            "title": "News Grids",
+            "items": [
+                {
+                    "type": "big_grid_1",
+                    "label": "Big Grid 1",
+                    "icon": "dashicons-grid-view",
+                    "description": "Featured post with sidebar",
+                    "preset": {
+                        "posts": 7,
+                        "featured": 1
+                    },
+                    "fields": [
+                        { "key": "posts", "label": "Number of Posts", "type": "number", "min": 1, "max": 20 },
+                        { "key": "cat", "label": "Category Slug", "type": "text" },
+                        { "key": "featured", "label": "Featured Posts", "type": "number", "min": 1, "max": 5 }
+                    ]
+                },
+                {
+                    "type": "flex_block_1",
+                    "label": "Flex Block 1",
+                    "icon": "dashicons-screenoptions",
+                    "description": "Flexible grid layout",
+                    "preset": {
+                        "posts": 8,
+                        "cols": 4
+                    },
+                    "fields": [
+                        { "key": "posts", "label": "Number of Posts", "type": "number", "min": 1, "max": 20 },
+                        { "key": "cat", "label": "Category Slug", "type": "text" },
+                        { "key": "cols", "label": "Columns", "type": "number", "min": 1, "max": 6 }
+                    ]
+                }
+            ]
+        }
+    ]
+}

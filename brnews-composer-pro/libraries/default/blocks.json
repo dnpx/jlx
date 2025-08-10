@@ -1,0 +1,68 @@
+{
+    "groups": [
+        {
+            "id": "layout",
+            "title": "Layout",
+            "items": [
+                {
+                    "type": "row",
+                    "label": "Row",
+                    "icon": "dashicons-editor-table",
+                    "description": "Add a new row with columns",
+                    "preset": {
+                        "columns": [
+                            { "width": "12", "modules": [] }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id": "content",
+            "title": "Content",
+            "items": [
+                {
+                    "type": "heading",
+                    "label": "Heading",
+                    "icon": "dashicons-editor-textcolor",
+                    "description": "Add headings H1-H6",
+                    "preset": {
+                        "text": "Your Heading",
+                        "tag": "h2"
+                    },
+                    "fields": [
+                        { "key": "text", "label": "Text", "type": "text" },
+                        { "key": "tag", "label": "Tag", "type": "select", "options": ["h1", "h2", "h3", "h4", "h5", "h6"] }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "label": "Text",
+                    "icon": "dashicons-editor-paragraph",
+                    "description": "Rich text editor",
+                    "preset": {
+                        "content": "<p>Your content here</p>"
+                    },
+                    "fields": [
+                        { "key": "content", "label": "Content", "type": "editor" }
+                    ]
+                },
+                {
+                    "type": "button",
+                    "label": "Button",
+                    "icon": "dashicons-button",
+                    "description": "Call to action button",
+                    "preset": {
+                        "text": "Click Here",
+                        "url": "#"
+                    },
+                    "fields": [
+                        { "key": "text", "label": "Button Text", "type": "text" },
+                        { "key": "url", "label": "URL", "type": "url" },
+                        { "key": "target", "label": "Target", "type": "select", "options": ["_self", "_blank"] }
+                    ]
+                }
+            ]
+        }
+    ]
+}
