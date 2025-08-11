@@ -1,0 +1,26 @@
+/* Brnews Pagebuilder PRO - Editor (resumo essencial) */
+:root{
+  --panel:#fff;--border:#dcdcde;--accent:#3858e9;--bg:#f0f2f5;
+  --panel-w:280px;--insp-w:320px;--head-h:57px;--adminbar:32px;--adminmenu:160px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+#wpcontent{padding-left:0}
+#brpb-editor-wrapper{position:fixed;top:var(--adminbar);left:var(--adminmenu);right:0;bottom:0;background:var(--bg);z-index:99998;display:flex;flex-direction:column}
+#brpb-header{display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid var(--border);padding:10px 20px;height:var(--head-h)}
+#brpb-main{display:flex;flex:1;overflow:hidden}
+#brpb-panel{width:var(--panel-w);background:var(--panel);border-right:1px solid var(--border);overflow:auto}
+#brpb-panel-elements{padding:15px}
+#brpb-panel-elements h3{font-size:11px;margin:18px 0 8px;color:#666;text-transform:uppercase}
+.brpb-element-group{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.brpb-element-drag-item{padding:10px;background:#f6f7f7;border:1px solid transparent;border-radius:4px;cursor:pointer;font-size:13px;display:flex;gap:8px;align-items:center}
+.brpb-element-drag-item:hover{background:#e9ecf5;border-color:var(--accent);color:var(--accent)}
+#brpb-canvas-wrapper{flex:1;padding:24px;overflow:auto;background:var(--bg)}
+#brpb-canvas-iframe{width:100%;height:100%;border:0;background:#fff;box-shadow:0 5px 25px rgba(0,0,0,.08);border-radius:4px}
+#brpb-inspector{width:var(--insp-w);background:#fff;border-left:1px solid var(--border);overflow:auto}
+#brpb-inspector-content{padding:16px}
+.brpb-control-wrapper{margin:12px 0}
+.brpb-control-wrapper label{display:block;font-weight:600;margin-bottom:6px}
+.brpb-control-wrapper input,.brpb-control-wrapper select,.brpb-control-wrapper textarea{width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;background:#fafafa}
+.loading{text-align:center;color:#666;padding:20px}
+.brpb-delete-element{color:#d63638;text-decoration:none}
+.brpb-element.brpb-active{outline:2px solid var(--accent);outline-offset:2px}

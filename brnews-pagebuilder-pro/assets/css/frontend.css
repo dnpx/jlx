@@ -1,0 +1,18 @@
+/* Brnews Pagebuilder PRO - Frontend base */
+.brpb-page-container .brpb-row{display:flex;flex-wrap:wrap;margin-left:-15px;margin-right:-15px}
+.brpb-page-container .brpb-column{position:relative;width:100%;padding-left:15px;padding-right:15px;box-sizing:border-box}
+/* Big Grid example */
+.brpb-element-type-big-grid-flex-1 .brpb-big-grid-flex-1{display:flex;gap:20px}
+.brpb-grid-post-large{flex:2;min-width:0}
+.brpb-grid-posts-small{flex:1;display:flex;flex-direction:column;gap:14px;min-width:0}
+/* CTA */
+.brpb-element-type-call-to-action .brpb-cta-box{padding:30px;border:1px solid #e0e0e0;text-align:center}
+.brpb-cta-button{display:inline-block;padding:12px 20px;border-radius:4px;text-decoration:none}
+/* Responsive hide */
+@media (min-width:1025px){.brpb-hide_desktop{display:none!important}}
+@media (min-width:768px) and (max-width:1024px){.brpb-hide_tablet{display:none!important}}
+@media (max-width:767px){
+  .brpb-hide_mobile{display:none!important}
+  .brpb-page-container .brpb-row{flex-direction:column;margin-left:0;margin-right:0}
+  .brpb-page-container .brpb-column{width:100%!important;padding:0}
+}
